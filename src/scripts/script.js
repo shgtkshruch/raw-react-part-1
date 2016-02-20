@@ -26,10 +26,10 @@
 
     render: function () {
       return (
-        React.createElement('li', {},
-          React.createElement('h2', {}, this.props.name),
-          React.createElement('a', {href: 'mailto:' + this.props.email}, this.props.email),
-          React.createElement('div', {}, this.props.description)
+        React.createElement('li', {className: 'ContactItem'},
+          React.createElement('h2', {className: 'ContactItem-name'}, this.props.name),
+          React.createElement('a', {className: 'ContactItem-email', href: 'mailto:' + this.props.email}, this.props.email),
+          React.createElement('div', {className: 'ContactItem-description'}, this.props.description)
         )
       );
     }
@@ -42,7 +42,7 @@
 
     render: function () {
       return (
-        React.createElement('form', {},
+        React.createElement('form', {className: 'ContactForm'},
           React.createElement('input', {
             type: 'text',
             placeholder: 'Name (required)',
@@ -63,19 +63,38 @@
     }
   });
 
+  var ContactView = React.createClass({
+    propTypes: {
+      contacts: React.PropTypes.array.isRequired,
+      newContact: React.PropTypes.object.isRequired
+    },
+
+    render: function () {
+      var contactItemElements = contacts
+        .filter(function (contact) { return contact.email })
+        .map(function (contact) { return React.createElement(ContactItem, contact); });
+
+      return (
+        React.createElement('div', {className: 'ContactView'},
+          React.createElement('h1', {className: 'ContactView-title'},'contacts'),
+          React.createElement('ul', {className: 'ContactView-list'}, contactItemElements),
+          React.createElement(ContactForm, {contact: this.props.newContact})
+        )
+      );
+
+    }
+  });
+
   /*
-   * Render
+   * Entry points
    */
 
-  var contactItemElements = contacts
-    .filter(function (contact) { return contact.email })
-    .map(function (contact) { return React.createElement(ContactItem, contact); });
-
-  var rootElement = React.createElement('div', {},
-    React.createElement('h1', {},'contacts'),
-    React.createElement('ul', {}, contactItemElements),
-    React.createElement(ContactForm, {contact: newContact})
+  ReactDOM.render(
+    React.createElement(ContactView, {
+      contacts: contacts,
+      newContact: newContact
+    }),
+    document.getElementById('react-app')
   );
 
-  ReactDOM.render(rootElement, document.getElementById('react-app'));
 }());
